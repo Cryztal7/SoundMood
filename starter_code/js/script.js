@@ -15,7 +15,7 @@
 // # Initialize the Soundcloud API client with our client ID
 //
 SC.initialize({
-  client_id: 'TODO: Replace this with your client_id'
+  client_id: '562612f465586fd93fba1df505ae5ce7'
 });
 
 
@@ -32,7 +32,15 @@ SC.initialize({
 //
 $(document).ready(function() {
   // Add click handlers to 'go' and 'random' buttons here.
+  $("#go").click(function(){
+    goClicked();
+  });
+  // Add click handlers to 'go' and 'random' buttons here.
+  $("#random").click(function(){
+    randomClicked();
+  });
 });
+
 
 
 // ======================================
@@ -50,6 +58,8 @@ $(document).ready(function() {
 //
 function goClicked() {
   // TODO: fill this out
+  var mood = $("#mood").val();
+  searchTracks(mood);
 }
 
 //
@@ -64,6 +74,15 @@ function goClicked() {
 //
 function searchTracks(mood) {
   // TODO: fill this out
+  SC.get(
+    '/tracks',
+   {genre: mood,license: 'cc-by-sa',},
+   function(tracks){
+     var index = Math.floor(Math.random()*tracks.length);
+     var track = tracks[index];
+     console.log(track);
+     playTrack(track.id);
+   });
 }
 
 //
@@ -80,8 +99,12 @@ var currentSong = null; // The song that is currently playing
 function playTrack(trackid) {
   if (currentSong != null) {
     // TODO: stop the current song
-  }
+  SC.stream('/tracks/' + trackid).then( function(player){
+    player.play();
+  });
+}
   // TODO: stream the track based on the given id and update 'currentSong'.
+  
 }
 
 //
@@ -94,7 +117,9 @@ function playTrack(trackid) {
 //
 function updateJumboTron(mood) {
   $('#moodstatus').text('It sounds like you are in a ' + mood +  ' mood!!');
-}
+  randomMood();
+  changeColor();
+} 
 
 
 // =======================
@@ -111,6 +136,11 @@ function updateJumboTron(mood) {
 //
 function randomClicked() {
   // TODO: fill this out
+  var mood = randomMood();
+  searchTracks(mood);
+  
+  
+  updateJumboTron(mood);
 }
 
 //
@@ -119,9 +149,13 @@ function randomClicked() {
 // Returns a random mood from moodList.
 //
 // TODO: add moods to this list
-var moodList = [];
+var moodList = ["devastated", "repugnant", "defiant","unsatisfied", "nonchalant"];
 function randomMood() {
   // TODO: fill this out
+  var moodNum = Math.floor(Math.random()*moodList.length)
+  var mood = moodList[moodNum];
+  return mood;
+  
 }
 
 
